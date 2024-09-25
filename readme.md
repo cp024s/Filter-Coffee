@@ -1,4 +1,4 @@
-# Ethernet frame format
+# Ethernet frame format 
 ### 1. **Preamble (7 Bytes)**
    - **Purpose**: The preamble consists of alternating 1s and 0s and is used to synchronize the communication between the sender and receiver. It allows the receiver to establish clock synchronization before the actual data is transmitted.
    - **Structure**: `10101010` pattern repeated 7 times.
