@@ -1,5 +1,7 @@
 ### **Media Independent Interface (MII) - In Detail**
 
+https://www.intel.com/content/www/us/en/docs/programmable/683595/22-1-19-4-3/media-independent-interface-mii-to-external.html
+
 The **Media Independent Interface (MII)** is a standard that defines the interface between the **Media Access Control (MAC)** sublayer and the **Physical Layer (PHY)** in Ethernet networks. It was originally designed for **10 Mbps Ethernet (10BASE-T)** and **100 Mbps Ethernet (100BASE-TX)**, but the key idea behind the MII is to create a uniform interface that allows the MAC layer to work independently of the physical medium being used.
 
 Here’s a detailed breakdown of the MII:
