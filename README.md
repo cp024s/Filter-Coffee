@@ -3,29 +3,30 @@
 please update the file heirarchy whenever you are pushing a new code into this repo:
 ```
 Filter-Coffee/
+|
 ├── PRT/ (CP)
 │    ├── PRT_v1.sv 
-|    ├── PRT_v2.sv     #array method
+|    ├── PRT_v2.sv             # array method
 |    ├── Readme.md
 │    ├── TB/
-|    |    ├── PRT_v2_TB.sv     #testbench for PRT_v2
+|    |    ├── PRT_v2_TB.sv     # testbench for PRT_v2
 |    └──
 |
 ├── Ref/ (CP)
 │    ├── bloom.sv
 |    └──
 |
-├──  SV_examples/ (CP)
+├──  SV_examples/ (CP)          # system verilog example codes for reference
 │    ├── FSM_ex.sv
 |    └── Interface_ex.sv
 |
-├──  Ethernet_IP/ (Nithish)
+├──  Ethernet_IP/ (Nithish)     # Nithish's personal space in the repo
 │    ├── Ethernet_PHY.sv
 │    ├── Ethernet_MDIO.sv
 │    ├── Ethernet_MDIO_TB.sv
 |    └── Ethernet_PHY_TB.sv
 |
-├──  Kavya_SV/ (Kavya)
+├──  Kavya_SV/ (Kavya)          # Kavya's personal space in the repo
 │    ├── PRT_copy.sv
 │    ├── ReadMe
 │    ├── bftb.sv
@@ -36,7 +37,7 @@ Filter-Coffee/
 │    ├── prt.sv
 |    └── top_module_no_cpu
 |
-├──  sv_src (CP)
+├──  sv_src (CP)                # CP's personal space in the repo
 │    ├── bloom filter_complete.sv
 │    ├── struct prompt.sv
 │    ├── bloomFilter_tb.sv
