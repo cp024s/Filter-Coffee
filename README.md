@@ -1,6 +1,6 @@
 # Shakti - Packet Filter Firewall
 
-please update the file heirarchy whenever you are pushing a new code into this repo
+please update the file heirarchy whenever you are pushing a new code into this repo:
 ```
 Filter-Coffee/
 ├── PRT/ (CP)
@@ -44,7 +44,6 @@ Filter-Coffee/
 |
 ├── Markdown files
 └── Readme
-
 ```
 
 ---
