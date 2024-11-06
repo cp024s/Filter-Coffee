@@ -27,7 +27,7 @@
 // 
 // Create Date: 11/05/2024 09:01:22 AM
 // Design Name: 
-// Module Name: mpd
+// Module Name: mpdmk
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
@@ -127,7 +127,7 @@ module mpdmk(input logic clk,rst);
 			    rx_slot <= tagged Valid(slot);
 			    receive_frame_state <= GET_FRAME_DATA;
 		end
-         
+       end 
         always @ (posedge clk) begin
         
             if ((receive_frame_state == GET_FRAME_DATA) && (!currently_recv_packet_is_unsafe) && (header_availability == HEADER_NOT_AVAILABLE) && !ethernet.mac_rx.m_is_last_data_rcvd) begin
@@ -177,7 +177,8 @@ module mpdmk(input logic clk,rst);
 		              	header_availability <= HEADER_AVAILABLE;
 		      end  
 		 end 
-       end
+		 end 
+      
        
        // push header to fifo
        always @( posedge clk) begin 
