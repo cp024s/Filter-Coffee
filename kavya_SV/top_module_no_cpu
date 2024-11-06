@@ -81,7 +81,7 @@ module noncpulb(input clk, input reset );
     always @( posedge clk) begin
         bit z ; 
         if (isValid(header_in)) begin 
-            z <= bf.getResult;
+            z <= get_Result;
             if (z == 1) begin 
                 $display( "true: fp: send to cpu ");
             end else begin 
@@ -91,9 +91,10 @@ module noncpulb(input clk, input reset );
 		    header_in <= tagged Invalid;
         end 
     end 
+    //not sure on this function 
     function bit isValid( input Vtagg header_in) ;          
-          if ( header_in.Valid) begin 
-                         return 1;
+          if ( header_in.Valid.id && header_in.Valid.tag && header_in.Valid.header.protocol  ) begin 
+                         return 1;  
           end else begin 
                          return 0;
           end 
