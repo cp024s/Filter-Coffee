@@ -56,6 +56,10 @@ SendFrameState send_frame_state;
 
 module mpdmk(input logic clk,rst);
         //the struct    
+        
+        typedef bit Tag;  //refer the size of tag 
+        typedef bit  Index; //changes to in tag
+        
         typedef union tagged {
             int Valid ;
             void Invalid ;
@@ -81,8 +85,6 @@ module mpdmk(input logic clk,rst);
 	       Header header;
         } Fifo_struct;
 
-        typedef bit Tag;  //refer the size of tag 
-        typedef bit  Index; //changes to in tag
         
         BOOL is_prt_slot_free;
         
@@ -256,13 +258,14 @@ module mpdmk(input logic clk,rst);
 		   end 
        end 
        //methods in bsv put in the interface 
-       function  Header  get_header;
+       function  Fifo_struct get_header;
+            Fifo_struct header ;
             header = fifo_to_firewall.pop_front;
 		    fifo_to_firewall.pop_front;
 		    return header;   
        endfunction
            
-       function void  mkmpd.send_result (input bit ethid ,input  Tagged_index tag,input  bit result);
+       function void  send_result (input bit ethid ,input  Index tag ,input  bit result);
               Tagged_index firewall_output;
 		      firewall_output.id = ethid;
 		      firewall_output.tag = tag;
