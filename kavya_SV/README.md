@@ -15,7 +15,7 @@ NEED TO KNOW ABT THE DATA WIDTH AND ALL
 ___
 ## File heirarchy: (update as you do)
 ```
-──  Kavya_SV/v1
+──  Kavya_SV/
         ├── PRT_copy.sv
         ├── ReadMe
         ├── bftb.sv
