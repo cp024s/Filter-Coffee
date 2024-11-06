@@ -211,11 +211,12 @@ module mpdmk(input logic clk,rst);
        
        //invalidate_unsafe_prt_entries 
        always_ff @(posedge clk) begin 
-           if ((to_invalidate_fifo.notEmpty) ) begin 
+           if (!rst) begin //(to_invalidate_fifo.notEmpty) 
+              Tagged_index firewall_output; 
               firewall_output = to_invalidate_fifo.pop_front; 
 		      to_invalidate_fifo.pop_front;
 		      if ((firewall_output.tag == rx_slot.Valid) && (isValid(rx_slot))) begin
-			     currently_recv_packet_is_unsafe <= True;
+			     currently_recv_packet_is_unsafe <= TRUE;
 			     current_recv_packet_slot <= rx_slot.Valid;
 		      end	
 		      else begin
@@ -236,7 +237,8 @@ module mpdmk(input logic clk,rst);
        end 
        //tx_start_transmission
        always_ff @(posedge clk) begin 
-          if ((send_frame_state == START_TX) && (to_send_fifo.notEmpty) && (ethernet.mac_tx.m_ready_to_recv_next_frame)) begin
+          if ((send_frame_state == START_TX)  && (ethernet.mac_tx.m_ready_to_recv_next_frame)) begin //&& (to_send_fifo.notEmpty)
+             Tagged_index firewall_output;
              firewall_output <= to_send_fifo.pop_front;
 	         to_send_fifo.pop_front;
 		     prtdut.start_reading_prt_entry(firewall_output.tag);
