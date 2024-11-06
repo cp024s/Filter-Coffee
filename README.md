@@ -1,5 +1,54 @@
 # Shakti - Packet Filter Firewall
 
+please update the file heirarchy whenever you are pushing a new code into this repo
+```
+Filter-Coffee/
+├── PRT/ (CP)
+│    ├── PRT_v1.sv 
+|    ├── PRT_v2.sv     #array method
+|    ├── Readme.md
+│    ├── TB/
+|    |    ├── PRT_v2_TB.sv     #testbench for PRT_v2
+|    └──
+|
+├── Ref/ (CP)
+│    ├── bloom.sv
+|    └──
+|
+├──  SV_examples/ (CP)
+│    ├── FSM_ex.sv
+|    └── Interface_ex.sv
+|
+├──  Ethernet_IP/ (Nithish)
+│    ├── Ethernet_PHY.sv
+│    ├── Ethernet_MDIO.sv
+│    ├── Ethernet_MDIO_TB.sv
+|    └── Ethernet_PHY_TB.sv
+|
+├──  Kavya_SV/ (Kavya)
+│    ├── PRT_copy.sv
+│    ├── ReadMe
+│    ├── bftb.sv
+│    ├── bloomfilter.mem
+│    ├── bloomfilter.sv
+│    ├── mpdmk.sv
+│    ├── prt_newt.sv
+│    ├── prt.sv
+|    └── top_module_no_cpu
+|
+├──  sv_src (CP)
+│    ├── bloom filter_complete.sv
+│    ├── struct prompt.sv
+│    ├── bloomFilter_tb.sv
+│    ├── BloomFilter_Teamp.sv
+|
+├── Markdown files
+└── Readme
+
+```
+
+---
+
 ## Introduction
 The Shakti - Packet Filter Firewall project aims to provide a robust, hardware-accelerated firewall solution for high-speed networks. With the exponential growth in data transfer rates, traditional software-based firewalls face significant challenges in meeting the performance requirements. By leveraging FPGA-based hardware and a hybrid packet filtering approach, this project addresses the limitations of software solutions and achieves high-throughput packet filtering.
 
