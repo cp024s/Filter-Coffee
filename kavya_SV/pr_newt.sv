@@ -18,6 +18,7 @@
 // Additional Comments:
 // 
 //////////////////////////////////////////////////////////////////////////////////
+//(*ramstyle = "bram"*)
 // Table_Size = 2; //make present 
 
 parameter int Index_Size = 1;
@@ -26,11 +27,10 @@ parameter int DATA_SIZE = 8;
 parameter int DATA_ADDR_SIZE = 16;
 parameter int FrameSize = 1518;
 
-typedef enum {FALSE , TRUE} BOOL ;
 
 typedef struct { 
         BOOL valid;														   
-	    logic [0 : FrameSize] frame;	//endianess, frame                                      
+	    logic [0:7] [0 : FrameSize-1] frame;	//only frame needs to be stored in correct order others are just count so no problem                                
 	    logic [15:0] bytes_sent_req;											
 	    logic [15:0] bytes_sent_res;											
 	    logic [15:0] bytes_rcvd;												
@@ -69,7 +69,8 @@ module prt(input logic clk ,
                             prt_table[i].bytes_sent_res <= 0;
                             prt_table[i].bytes_rcvd <=0; 
                             prt_table[i].is_frame_fully_rcvd <= FALSE;
-                          
+                            using_write_slot <= FALSE;
+                            is_write_slot_available <= FALSE;
                         end
                     end else begin 
                             if((!using_write_slot) && !isValid(write_slot)) begin //&& (!conflict_tag)
@@ -111,8 +112,8 @@ module prt(input logic clk ,
                     input logic [7:0] data;
                     if((using_write_slot) && (!prt_table[write_slot.Valid].is_frame_fully_rcvd)) begin 
                         		automatic int slot = write_slot.Valid; 
-                        		prt_table[slot].frame <= data;
-                        		prt_table[slot].bytes_rcvd <= prt_table[slot].bytes_rcvd + 1;
+                        		prt_table[slot].frame = data;
+                        		prt_table[slot].bytes_rcvd = prt_table[slot].bytes_rcvd + 1;
                     end 
                endfunction
                
@@ -120,9 +121,9 @@ module prt(input logic clk ,
                function void finish_writing_prt_entry ;
                     if((using_write_slot) && (!prt_table[write_slot.Valid].is_frame_fully_rcvd)) begin 
                         automatic int slot = write_slot.Valid;
-                        using_write_slot <= FALSE;
-                        write_slot <= tagged Invalid ;
-                        prt_table[slot].is_frame_fully_rcvd <= TRUE;
+                        using_write_slot = FALSE;
+                        write_slot = tagged Invalid ;
+                        prt_table[slot].is_frame_fully_rcvd = TRUE;
                     end
                 endfunction
                 
@@ -132,8 +133,8 @@ module prt(input logic clk ,
                     input int slot; 
                     //conflict_tag<= 1;
                     if ((write_slot.Valid == slot) && (using_write_slot)) begin 
-                        using_write_slot <= FALSE;
-                        write_slot <= tagged Invalid;
+                        using_write_slot = FALSE;
+                        write_slot = tagged Invalid;
                     end 
                     if(prt_table[slot].valid) prt_table[slot].valid <= FALSE;
                  endfunction 
@@ -142,7 +143,7 @@ module prt(input logic clk ,
                  function void start_reading_prt_entry ;
                     input int slot ;
                     if(prt_table[slot].valid) begin 
-                        	read_slot <= tagged Valid(slot);  //satrt from the bram address 
+                        	read_slot = tagged Valid(slot);  //satrt from the bram address 
                     end 
                  endfunction 
                  
@@ -154,24 +155,24 @@ module prt(input logic clk ,
                     automatic int slot = read_slot.Valid;
                     logic [0 : FrameSize] data; 
                     data <= prt_table[slot].frame;
-		            prt_table[slot].bytes_sent_res <= prt_table[slot].bytes_sent_res + 1;
+		            prt_table[slot].bytes_sent_res = prt_table[slot].bytes_sent_res + 1;
                     
                     if (prt_table[slot].bytes_sent_req < prt_table[slot].bytes_rcvd) begin
-                         prt_table[slot].bytes_sent_req <= prt_table[slot].bytes_sent_req + 1;
+                         prt_table[slot].bytes_sent_req = prt_table[slot].bytes_sent_req + 1;
                     end     
                     
                     if ((prt_table[slot].bytes_sent_res + 1 == prt_table[slot].bytes_rcvd) && (prt_table[slot].is_frame_fully_rcvd)) begin
-			             read_slot <= tagged Invalid;	
-			             prt_table[slot].valid <= FALSE;
+			             read_slot = tagged Invalid;	
+			             prt_table[slot].valid = FALSE;
 			             out_prt.data_byte <= data ;
-			             out_prt.is_last_byte <= TRUE;
+			             out_prt.is_last_byte = TRUE;
 			             //
 			             //conflict_tag <= 1;
 			             return out_prt;
 			        end 
 			        else begin 
-			             out_prt.data_byte <= data;
-			             out_prt.is_last_byte <= FALSE;
+			             out_prt.data_byte = data;
+			             out_prt.is_last_byte = FALSE;
 			             return out_prt;
 			        end 
 			      end 
