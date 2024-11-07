@@ -1,16 +1,4 @@
-mpd and prt updated.
-
-mpd shows some error in always @ line -> corrected
-
-please tell other corrections as well
-
-confusion with clocks 
-
-top added 
-
-need to check valid or not 
-
-NEED TO KNOW ABT THE DATA WIDTH AND ALL
+mpd doing using cp's prt reference
 
 ___
 ## File heirarchy: (update as you do)
