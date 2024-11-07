@@ -7,12 +7,12 @@ Filter-Coffee/
 │
 ├── MPD/
 │   ├── mpd_v1.sv
-│   ├── mpd_v2.sv
+│   ├── mpd_v2.sv             # currently working (CP) 
 │   └── 
 │   
 ├── PRT/ (CP)
 │   ├── PRT_v1.sv
-│   ├── PRT_v2.sv              # array method
+│   ├── PRT_v2.sv             # array method
 │   ├── Readme.md
 │   ├── TB/
 │   │   ├── PRT_v2_TB.sv      # testbench for PRT_v2
