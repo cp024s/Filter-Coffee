@@ -1,6 +1,6 @@
 # <p align = center> AXI 1G/2.5G Ethernet Subsystem v7.2 Documentation </p>
 
-## Chapter 1: Introduction
+## Chapter 1: [Introduction](https://github.com/ChandraPrakash024/Filter-Coffee/blob/cp024s-patch-2/Ethernet%20Documentation/Chapter-1)
 
 The **AXI 1G/2.5G Ethernet Subsystem** is a flexible Ethernet solution supporting both 1G and 2.5G Ethernet configurations. Designed for AMD FPGAs and SoCs, this subsystem can implement multiple Ethernet protocols and PHY interfaces.
 
@@ -10,12 +10,14 @@ The **AXI 1G/2.5G Ethernet Subsystem** is a flexible Ethernet solution supportin
 - **VLAN and AVB Support**: Includes options for VLAN tagging, stripping, and translating, along with support for Ethernet Audio Video Bridging (AVB).
 - **Precision Timing**: Supports IEEE 1588 PTP with hardware timestamping for accurate synchronization.
 
+![](https://github.com/ChandraPrakash024/Filter-Coffee/blob/cp024s-patch-2/Ethernet%20Documentation/Assets/IPv4.png)
+
 ### Licensing
 - Provided with the Vivado Design Suite, although certain features like AVB require additional licenses. The Tri-Mode Ethernet MAC (TEMAC) IP core also has specific licensing details available in PG051.
 
 ---
 
-## Chapter 2: Overview
+## Chapter 2: [Overview](https://github.com/ChandraPrakash024/Filter-Coffee/blob/cp024s-patch-2/Ethernet%20Documentation/Chapter-2)
 
 ### Integration in Vivado
 The AXI Ethernet Subsystem is designed to be used within the Vivado IP Integrator for streamlined integration into an FPGA design. Users can add the subsystem directly from the IP catalog, allowing for parameter customization and connection to other system components.
