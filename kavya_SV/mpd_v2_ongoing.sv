@@ -205,12 +205,17 @@ module mpdmk#(parameter FRAME_SIZE = 1500 ,
            always@ (posedge clk)  begin 
                          // result calculation cases : yet to do 
                          if(reset) begin
-                         
+                            //write inital conditions need to do 
                          end else begin
                            case(tx_st)
                             GET_SEND_TO_FIFO: begin 
-                                //get the slot from fifo  
+                                int myslot;
+                                if(!empty_send) begin 
+                                    myslot<= read_data_send_fifo;
+                                end
+                                //put i=slot in prt and get corresponding frame
                                 //go to WAIT FOR SEND NEW FRAME 
+                                    tx_st <= WAIT_TO_SEND_NEW_FRAME;
                             end 
                             WAIT_TO_SEND_NEW_FRAME:begin 
                                 //if new frame is read or tx 
@@ -235,7 +240,9 @@ module mpdmk#(parameter FRAME_SIZE = 1500 ,
             else begin 
                 case (inv_st) 
                     GET_FROM_INV_FIFO: begin 
+                          int slot_inv; 
                                //get from inv fifo and invalidate the prt entry 
+                                slot_inv <= read_data_inv_fifo;
                                 if(is_current_frame_unsafe) begin
                                 //force stop rx 
                                 //go to GET_NEW_FRAME
@@ -257,22 +264,28 @@ module mpdmk#(parameter FRAME_SIZE = 1500 ,
             else begin 
                 case (state_inside) 
                       GET_FROM_FW:begin
-
                             write_en_fw_fifo <= 1'b0;
                                     //result + tag from the fw
-                            if (resultplustag.res == 1) begin //true unsafe  
+                            if (resultplustag.res == 1) begin //true unsafe  get from the ftop
                                        //put in invalidate fifo
-                            write_en_inv_fifo <= 1'b1;
-                            if (!full_inv) begin
-                                write_data_inv_fifo <= resultplustag.slot;   
-                            end                                          
-                        end 
-                        else if (resultplustag.res == 0) begin //safe
-                                            // then safe,  send tag/slot to to_send fifo
-                                               //then get from the to_send fifo                                                
-                        end    
-                      end
+                                write_en_inv_fifo <= 1'b1;
+                                if (!full_inv) begin
+                                    write_data_inv_fifo <= resultplustag.slot;   
+                                end                                          
+                            end 
+                            else if (resultplustag.res == 0) begin //safe
+                                 // then safe,  send tag/slot to to_send fifo
+                                 write_en_send_fifo <= 1'b1;           
+                                               //then get from the to_send fifo
+                                 if(!full_send) begin 
+                                    write_data_send_fifo <= resultplustag.slot;
+                                 end                                                  
+                            end    
+                            state_inside <= GOTO_NXT_STATE;
+                        end
                       GOTO_NXT_STATE: begin
+                                 write_en_inv_fifo <= 1'b0;
+                                 write_en_send_fifo <= 1'b0;           
                       end
                 endcase
            end  
