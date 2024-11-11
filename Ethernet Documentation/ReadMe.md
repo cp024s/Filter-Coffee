@@ -10,6 +10,8 @@ The **AXI 1G/2.5G Ethernet Subsystem** is a flexible Ethernet solution supportin
 - **VLAN and AVB Support**: Includes options for VLAN tagging, stripping, and translating, along with support for Ethernet Audio Video Bridging (AVB).
 - **Precision Timing**: Supports IEEE 1588 PTP with hardware timestamping for accurate synchronization.
 
+![](https://github.com/ChandraPrakash024/Filter-Coffee/blob/cp024s-patch-2/Ethernet%20Documentation/Assets/IPv4.png)
+
 ### Licensing
 - Provided with the Vivado Design Suite, although certain features like AVB require additional licenses. The Tri-Mode Ethernet MAC (TEMAC) IP core also has specific licensing details available in PG051.
 
