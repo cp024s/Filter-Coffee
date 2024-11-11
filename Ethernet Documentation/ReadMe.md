@@ -1,6 +1,6 @@
 # <p align = center> AXI 1G/2.5G Ethernet Subsystem v7.2 Documentation </p>
 
-## Chapter 1: Introduction
+## Chapter 1: [Introduction](https://github.com/ChandraPrakash024/Filter-Coffee/blob/cp024s-patch-2/Ethernet%20Documentation/Chapter-1)
 
 The **AXI 1G/2.5G Ethernet Subsystem** is a flexible Ethernet solution supporting both 1G and 2.5G Ethernet configurations. Designed for AMD FPGAs and SoCs, this subsystem can implement multiple Ethernet protocols and PHY interfaces.
 
@@ -15,7 +15,7 @@ The **AXI 1G/2.5G Ethernet Subsystem** is a flexible Ethernet solution supportin
 
 ---
 
-## Chapter 2: Overview
+## Chapter 2: [Overview](https://github.com/ChandraPrakash024/Filter-Coffee/blob/cp024s-patch-2/Ethernet%20Documentation/Chapter-2)
 
 ### Integration in Vivado
 The AXI Ethernet Subsystem is designed to be used within the Vivado IP Integrator for streamlined integration into an FPGA design. Users can add the subsystem directly from the IP catalog, allowing for parameter customization and connection to other system components.
