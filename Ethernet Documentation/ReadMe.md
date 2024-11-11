@@ -32,7 +32,7 @@ Users are advised to configure the subsystem according to the intended Ethernet 
 
 ---
 
-## Chapter 3: Product Specification
+## Chapter 3: [Product Specification](https://github.com/ChandraPrakash024/Filter-Coffee/blob/Master/Ethernet%20Documentation/Chapter-3.md)
 
 This chapter provides the functional breakdown, port definitions, and configuration parameters.
 
@@ -56,7 +56,7 @@ IEEE 802.3 flow control can prevent data loss by sending or receiving pause fram
 
 ---
 
-## Chapter 4: Designing with the Subsystem
+## Chapter 4: [Designing with the Subsystem](https://github.com/ChandraPrakash024/Filter-Coffee/blob/Master/Ethernet%20Documentation/Chapter-4.md)
 
 This chapter covers detailed design guidelines for proper configuration and signal management.
 
@@ -73,7 +73,7 @@ Various configurations are provided for different use cases, ensuring flexibilit
 
 ---
 
-## Chapter 5: Design Flow Steps
+## Chapter 5: [Design Flow Steps](https://github.com/ChandraPrakash024/Filter-Coffee/blob/Master/Ethernet%20Documentation/Chapter-5.md)
 
 This chapter guides the user through key steps in configuring, simulating, and implementing the subsystem within Vivado.
 
@@ -90,7 +90,7 @@ Instructions for simulating the subsystem using Vivado-supported simulators, wit
 
 ---
 
-## Chapter 6: Example Design
+## Chapter 6: [Example Design](https://github.com/ChandraPrakash024/Filter-Coffee/blob/Master/Ethernet%20Documentation/Chapter-6.md)
 
 An example design is provided to illustrate how to integrate and test the subsystem in a practical setup.
 
@@ -104,7 +104,7 @@ Detailed steps are provided for targeting an FPGA board, including configuring t
 
 ---
 
-## Chapter 7: Test Bench
+## Chapter 7: [Test Bench](https://github.com/ChandraPrakash024/Filter-Coffee/blob/Master/Ethernet%20Documentation/Chapter-7.md)
 
 ### Test Bench Functionality
 Describes the default test bench provided with the subsystem. It simulates typical Ethernet data flow scenarios, verifying functionality for both transmission and reception paths.
@@ -114,7 +114,7 @@ Users can modify the test bench to test specific features or handle custom data 
 
 ---
 
-## Chapter 8: IEEE 1588 Timestamping
+## Chapter 8: [IEEE 1588 Timestamping](https://github.com/ChandraPrakash024/Filter-Coffee/blob/Master/Ethernet%20Documentation/Chapter-8.md)
 
 The subsystem offers IEEE 1588 Precision Time Protocol (PTP) for synchronized timestamps on Ethernet packets, often used in industrial or automation contexts.
 
@@ -126,7 +126,7 @@ The IEEE 1588 functionality requires specific transceivers and PHY interfaces co
 
 ---
 
-## Chapter 9: Upgrading
+## Chapter 9: (Upgrading)
 
 Guidelines for users upgrading to the latest subsystem version.
 
