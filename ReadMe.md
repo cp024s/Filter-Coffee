@@ -5,6 +5,9 @@
 ```
 Filter-Coffee/
 │
+├── Bloom filter/
+|   ├── bloom_filter_v1.sv    # bloom filter without refering the BSV code and completely done using architecture diagram alone  
+|
 ├── MPD/
 │   ├── mpd_v1.sv
 │   ├── mpd_v2.sv             # currently working (CP) 
