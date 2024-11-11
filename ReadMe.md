@@ -8,6 +8,18 @@ Filter-Coffee/
 ├── Bloom filter/
 |   ├── bloom_filter_v1.sv    # bloom filter without refering the BSV code and completely done using architecture diagram alone  
 |
+├── Ethernet Documentation/
+|    ├── ReadMe.md
+|    ├── Chapter 1     Introduction
+|    ├── Chapetr 2     Overview
+|    ├── Chapetr 3     Product specification
+|    ├── Chapetr 4     Designing with specific system
+|    ├── Chapetr 5     Design Flow Steps
+|    ├── Chapetr 6     Example Design
+|    ├── Chapetr 7     Test Bench
+|    ├── Chapetr 8     IEEE 1588 Timestamping
+|    ├── Chapetr 9     Upgrading
+|    ├── Chapetr 10    Debugging
 ├── MPD/
 │   ├── mpd_v1.sv
 │   ├── mpd_v2.sv             # currently working (CP) 
