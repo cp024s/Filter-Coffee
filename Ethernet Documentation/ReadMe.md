@@ -126,7 +126,7 @@ The IEEE 1588 functionality requires specific transceivers and PHY interfaces co
 
 ---
 
-## Chapter 9: (Upgrading)
+## Chapter 9: [Upgrading](https://github.com/ChandraPrakash024/Filter-Coffee/blob/Master/Ethernet%20Documentation/Chapter-9.md)
 
 Guidelines for users upgrading to the latest subsystem version.
 
