@@ -1,3 +1,7 @@
+//inv remains 
+//prt remains
+//ethernet remains
+//prt needs to be changed
 module mpdmk#(parameter FRAME_SIZE = 1500 ,
               parameter DATA_WIDTH = 8,
               parameter HEADER_BIT = 104) (
@@ -14,10 +18,10 @@ module mpdmk#(parameter FRAME_SIZE = 1500 ,
     
     //signals for tx
     input logic result_plus_tag, //format 
-    output logic to_send_fifo_slot,
-    output logic to_invalidate_fifo_slot,
-    input logic get_from_fifo_slot,
-    output logic send_inv_slot_to_prt,
+    output logic to_send_fifo_slot, //check
+    output logic to_invalidate_fifo_slot, //check
+    input logic get_from_fifo_slot,//check
+    output logic send_inv_slot_to_prt, //check
     input bit new_frame_rdy_to_send,
     output logic [DATA_WIDTH:0] tx_frame,
     input logic [DATA_WIDTH:0] get_tx_data_prt,
@@ -41,7 +45,8 @@ module mpdmk#(parameter FRAME_SIZE = 1500 ,
         logic res;
     }resultslot;
     resultslot resultplustag;
-    
+    //tx_declare
+    logic [DATA_WIDTH:0] data_prt;
     //declaration 
     state_mpd state_inside;
     state_rx rx_st;
@@ -87,6 +92,8 @@ module mpdmk#(parameter FRAME_SIZE = 1500 ,
     logic empty_inv;
     
     logic is_current_frame_unsafe ; //output of the prt
+    //ethernet 
+    logic new_frame_ready_to_send;
     
     //instantiations
     prt prt_table(.clk(clk), .rst(reset),.frame_in_valid(frame_in_valid),
@@ -206,33 +213,50 @@ module mpdmk#(parameter FRAME_SIZE = 1500 ,
                          // result calculation cases : yet to do 
                          if(reset) begin
                             //write inital conditions need to do 
+                            tx_st <= GET_SEND_TO_FIFO;
+                            is_frame_fully_sent <= 1'b0;
                          end else begin
                            case(tx_st)
                             GET_SEND_TO_FIFO: begin 
                                 int myslot;
+                                is_frame_fully_sent <= 1'b0;
                                 if(!empty_send) begin 
                                     myslot<= read_data_send_fifo;
+                                    slot <= myslot ; //put slot into prt table
+                                    tx_st <= WAIT_TO_SEND_NEW_FRAME;
+                                end else begin
+                                    tx_st <= GET_SEND_TO_FIFO;
                                 end
                                 //put i=slot in prt and get corresponding frame
+                                //frame_data_out;
                                 //go to WAIT FOR SEND NEW FRAME 
-                                    tx_st <= WAIT_TO_SEND_NEW_FRAME;
                             end 
                             WAIT_TO_SEND_NEW_FRAME:begin 
-                                //if new frame is read or tx 
-                                //then go to tx data out state 
+                                //if new frame is ready to send from ethernet 
+                                if (new_frame_rdy_to_send) begin  //from ethernet => note no ethernet instntiation is made 
+                                    tx_st <= TX_DATA_OUT;
+                                end else begin 
+                                    tx_st <= WAIT_TO_SEND_NEW_FRAME;
+                                end                             //then go to tx data out state 
                                 //else stay here
                             end 
                             TX_DATA_OUT: begin
                                 //get the byte from the prt to the 
-                                //send byte by byte 
-                                //if(last byte) => fully-sent == 1
-                                //and state wait_to_send_new_frame 
-                                //else state = tx_data_out 
-                                
+                                if (is_it_last_byte_prt) begin 
+                                    is_frame_fully_sent <= 1'b1;
+                                    tx_st <= GET_SEND_TO_FIFO;                                
+                                end else begin 
+                                    int byte_j;
+                                    for ( byte_j = 0; byte_j< FRAME_SIZE; byte_j +=1 ) begin  
+                                           tx_frame <= frame_data_out;
+                                           //tx_frame <= data_prt ;
+                                    end 
+                                end
                             end                          
                     endcase 
              end
        end
+       
        //design inv
        always @(posedge clk) begin 
             if(reset) begin 
@@ -241,18 +265,22 @@ module mpdmk#(parameter FRAME_SIZE = 1500 ,
                 case (inv_st) 
                     GET_FROM_INV_FIFO: begin 
                           int slot_inv; 
+                          if (!empty_inv) begin 
                                //get from inv fifo and invalidate the prt entry 
-                                slot_inv <= read_data_inv_fifo;
-                                if(is_current_frame_unsafe) begin
+                                slot_inv <= read_data_inv_fifo; //put into prt
+                                if(is_current_frame_unsafe) begin //need to come up with this logic ? how to identify current frame 
                                 //force stop rx 
+                                //inv prt entry 
                                 //go to GET_NEW_FRAME
+                                rx_st <= WAIT_FOR_NEW_FRAME;
                                 end else begin 
                                     //invalidate prt by slot
+                                    inv_st <= INV_PRT;
                                 end 
-                    end 
-                    GET_INV_FIFO:begin 
+                          end
                     end 
                     INV_PRT:begin 
+                    //code for inv prt enty 
                     end
                 endcase
             end
