@@ -1,6 +1,6 @@
 ## <p align = center> Chapter 6 - Example Design </p>
 
-### in the AXI 1G/2.5G Ethernet Subsystem v7.2 Product Guide provides information on a pre-built design example. This chapter details the design’s components, operational setup, and how it is tailored for specific FPGA boards, such as the KC705 and KCU105 evaluation kits.
+In the AXI 1G/2.5G Ethernet Subsystem v7.2 Product Guide provides information on a pre-built design example. This chapter details the design’s components, operational setup, and how it is tailored for specific FPGA boards, such as the KC705 and KCU105 evaluation kits.
 
 ---
 
