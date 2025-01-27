@@ -1,5 +1,3 @@
-
-
 module MPD_FSM (
     input logic                clk,
     input logic                reset_n,
