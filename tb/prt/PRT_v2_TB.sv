@@ -6,6 +6,9 @@ module tb_PacketReferenceTable;
     parameter NUM_ENTRIES = 10;
     parameter FRAME_SIZE = 1518;
 
+
+// these are the inputs and outputs for the PacketReferenceTable module
+
     // Inputs
     logic clk;
     logic rst;
