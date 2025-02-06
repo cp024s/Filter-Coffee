@@ -263,6 +263,7 @@ BRAM2 #(.PIPELINED(1'd0),                        // PIPELINED is set to 0, meani
             .DOB(prt_table_1_frame$DOB)           // Data output for port B (used for reading data from the BRAM).
         );
 
+// ----------------------------------------------------------------------------------------------------------------------------
 
 // rule RL_update_write_slot: The rule checks if the write slot is not being used and if no conflicts exist for updating the write slot.
 assign WILL_FIRE_RL_update_write_slot = !using_write_slot && !write_slot[1] && !conflict_update_write_slot$whas && !EN_read_prt_entry && !EN_invalidate_prt_entry ;
