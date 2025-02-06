@@ -43,7 +43,8 @@ module mkPRT(
   
   );
   
-// ----------------------------------------------------------------------------------------------------------------------------
+// ____________________________________________________________________________________________________________________________
+
 // ------------------------------------------------------- INLINE WIRES -------------------------------------------------------
 
   // inlined wires
@@ -114,6 +115,7 @@ module mkPRT(
   logic [1 : 0] write_slot$D_IN;             // Data input (D_IN) for write_slot.
   logic write_slot$EN;                       // Enable signal for updating write_slot.
 
+// ____________________________________________________________________________________________________________________________
 
 // Ports for prt_table_0_frame submodule
 logic [15:0] prt_table_0_frame$ADDRA, prt_table_0_frame$ADDRB;                    // Address lines for read and write operations on prt_table_0
@@ -152,8 +154,7 @@ logic IF_read_slot_3_BIT_1_4_THEN_read_slot_3_BIT_0__ETC___d77, IF_read_slot_3_B
 logic NOT_SEL_ARR_NOT_prt_table_0_valid_2_3_NOT_prt__ETC___d47, SEL_ARR_prt_table_0_bytes_sent_req_4_prt_table_ETC___d69;  // Signals for byte sent requests and negations in selection array
 logic SEL_ARR_prt_table_0_bytes_sent_res_8_prt_table_ETC___d85, write_slot_BIT_1_AND_IF_write_slot_BIT_1_THEN__ETC___d39;  // Signals for byte sent results and conditional logic for write slot
 
-// ----------------------------------------------------------------------------------------------------------------------------
-// -------------------------------------------------------              -------------------------------------------------------
+// ____________________________________________________________________________________________________________________________
 
 // Actionvalue method start_writing_prt_entry
 // 'start_writing_prt_entry' is assigned to the value of the first bit of 'write_slot',
@@ -213,7 +214,8 @@ assign is_prt_slot_free = write_slot[1] && !using_write_slot;
 // meaning the system can always check if a PRT slot is free.
 assign RDY_is_prt_slot_free = 1'd1;
 
-// ----------------------------------------------------------------------------------------------------------------------------
+// ____________________________________________________________________________________________________________________________
+
 // ------------------------------------------------------- BRAM MODULE INSTANCES ----------------------------------------------
 
 // BRAM2 instance for prt_table_0_frame
@@ -262,70 +264,69 @@ BRAM2 #(.PIPELINED(1'd0),                        // PIPELINED is set to 0, meani
             .DOA(),                               // Data output for port A (unused in this case).
             .DOB(prt_table_1_frame$DOB)           // Data output for port B (used for reading data from the BRAM).
         );
-
-// ----------------------------------------------------------------------------------------------------------------------------
-
-// rule RL_update_write_slot: The rule checks if the write slot is not being used and if no conflicts exist for updating the write slot.
-assign WILL_FIRE_RL_update_write_slot = !using_write_slot && !write_slot[1] && !conflict_update_write_slot$whas && !EN_read_prt_entry && !EN_invalidate_prt_entry ;
-
-// inputs to muxes for submodule ports
-
-// Selects the first input of MUX for the prt_table 0 bytes received when enabling write operation and the slot 0 is free.
-assign MUX_prt_table_0_bytes_rcvd$write_1__SEL_1 = EN_write_prt_entry && write_slot[0] == 1'd0 ;
-
-// Selects the second input of MUX for the prt_table 0 bytes received when starting the write operation and slot 0 is free.
-assign MUX_prt_table_0_bytes_rcvd$write_1__SEL_2 = EN_start_writing_prt_entry && write_slot[0] == 1'd0 ;
-
-// Selects the first input of MUX for the prt_table 0 bytes sent result when enabling read operation and slot 0 is free.
-assign MUX_prt_table_0_bytes_sent_res$write_1__SEL_1 = EN_read_prt_entry && read_slot[0] == 1'd0 ;
-
-// Selects the first input of MUX for prt_table 0 frame write operation when starting read and specific conditions are met.
-assign MUX_prt_table_0_frame$b_put_1__SEL_1 = EN_start_reading_prt_entry && start_reading_prt_entry_slot == 1'd0 && NOT_SEL_ARR_NOT_prt_table_0_valid_2_3_NOT_prt__ETC___d47 ;
-
-// Selects the second input of MUX for prt_table 0 valid write operation when invalidating prt entry and the slot is invalid.
-assign MUX_prt_table_0_valid$write_1__SEL_2 = EN_invalidate_prt_entry && invalidate_prt_entry_slot == 1'd0 && SEL_ARR_prt_table_0_valid_2_prt_table_1_valid__ETC___d42 ;
-
-// Selects the third input of MUX for prt_table 0 valid write operation when enabling read entry and another condition for slot 3.
-assign MUX_prt_table_0_valid$write_1__SEL_3 = EN_read_prt_entry && IF_read_slot_3_BIT_1_4_THEN_read_slot_3_BIT_0__ETC___d77 ;
-
-// Selects the first input of MUX for the prt_table 1 bytes received when enabling write operation and slot 1 is free.
-assign MUX_prt_table_1_bytes_rcvd$write_1__SEL_1 = EN_write_prt_entry && write_slot[0] == 1'd1 ;
-
-// Selects the second input of MUX for the prt_table 1 bytes received when starting write operation and slot 1 is free.
-assign MUX_prt_table_1_bytes_rcvd$write_1__SEL_2 = EN_start_writing_prt_entry && write_slot[0] == 1'd1 ;
-
-// Selects the first input of MUX for prt_table 1 bytes sent result when enabling read operation and slot 1 is free.
-assign MUX_prt_table_1_bytes_sent_res$write_1__SEL_1 = EN_read_prt_entry && read_slot[0] == 1'd1 ;
-
-// Selects the first input of MUX for prt_table 1 frame write operation when starting read and specific conditions are met.
-assign MUX_prt_table_1_frame$b_put_1__SEL_1 = EN_start_reading_prt_entry && start_reading_prt_entry_slot == 1'd1 && NOT_SEL_ARR_NOT_prt_table_0_valid_2_3_NOT_prt__ETC___d47 ;
-
-// Selects the second input of MUX for prt_table 1 valid write operation when invalidating prt entry and the slot is invalid.
-assign MUX_prt_table_1_valid$write_1__SEL_2 = EN_invalidate_prt_entry && invalidate_prt_entry_slot == 1'd1 && SEL_ARR_prt_table_0_valid_2_prt_table_1_valid__ETC___d42 ;
-
-// Selects the third input of MUX for prt_table 1 valid write operation when enabling read entry and another condition for slot 3.
-assign MUX_prt_table_1_valid$write_1__SEL_3 = EN_read_prt_entry && IF_read_slot_3_BIT_1_4_THEN_read_slot_3_BIT_0__ETC___d78 ;
-
-// Selects the first input of MUX for reading the prt slot when enabling the read operation and matching other conditions.
-assign MUX_read_slot$write_1__SEL_1 = EN_read_prt_entry && x__h2937 == y__h2770 && SEL_ARR_prt_table_0_is_frame_fully_rcvd_9_prt__ETC___d75 ;
-
-// Selects the first input of MUX for using the write slot when invalidating prt entry and conditions on the write slot are met.
-assign MUX_using_write_slot$write_1__SEL_1 = EN_invalidate_prt_entry && write_slot_BIT_1_AND_IF_write_slot_BIT_1_THEN__ETC___d39 ;
-
-// Computes the next value for prt_table 0 bytes received by incrementing the value of x2 by 1.
-assign MUX_prt_table_0_bytes_rcvd$write_1__VAL_1 = x2__h2068 + 16'd1 ;
-
-// Computes the next value for prt_table 0 bytes sent request by incrementing the value of y by 1.
-assign MUX_prt_table_0_bytes_sent_req$write_1__VAL_2 = y__h2729 + 16'd1 ;
-
-// Combines the starting read signal with other conditions into a single value for the MUX input for the read slot.
-assign MUX_read_slot$write_1__VAL_2 = { 1'd1, start_reading_prt_entry_slot } ;
-
-// Combines conditions for the write slot into a single value for the MUX input based on validity of prt_table 0 and prt_table 1.
-assign MUX_write_slot$write_1__VAL_3 = { !prt_table_1_valid || !prt_table_0_valid, !prt_table_1_valid } ;
-
-
-
+ 
+// ____________________________________________________________________________________________________________________________
+    
+    // rule RL_update_write_slot: The rule checks if the write slot is not being used and if no conflicts exist for updating the write slot.
+    assign WILL_FIRE_RL_update_write_slot = !using_write_slot && !write_slot[1] && !conflict_update_write_slot$whas && !EN_read_prt_entry && !EN_invalidate_prt_entry ;
+    
+    // inputs to muxes for submodule ports
+    
+    // Selects the first input of MUX for the prt_table 0 bytes received when enabling write operation and the slot 0 is free.
+    assign MUX_prt_table_0_bytes_rcvd$write_1__SEL_1 = EN_write_prt_entry && write_slot[0] == 1'd0 ;
+    
+    // Selects the second input of MUX for the prt_table 0 bytes received when starting the write operation and slot 0 is free.
+    assign MUX_prt_table_0_bytes_rcvd$write_1__SEL_2 = EN_start_writing_prt_entry && write_slot[0] == 1'd0 ;
+    
+    // Selects the first input of MUX for the prt_table 0 bytes sent result when enabling read operation and slot 0 is free.
+    assign MUX_prt_table_0_bytes_sent_res$write_1__SEL_1 = EN_read_prt_entry && read_slot[0] == 1'd0 ;
+    
+    // Selects the first input of MUX for prt_table 0 frame write operation when starting read and specific conditions are met.
+    assign MUX_prt_table_0_frame$b_put_1__SEL_1 = EN_start_reading_prt_entry && start_reading_prt_entry_slot == 1'd0 && NOT_SEL_ARR_NOT_prt_table_0_valid_2_3_NOT_prt__ETC___d47 ;
+    
+    // Selects the second input of MUX for prt_table 0 valid write operation when invalidating prt entry and the slot is invalid.
+    assign MUX_prt_table_0_valid$write_1__SEL_2 = EN_invalidate_prt_entry && invalidate_prt_entry_slot == 1'd0 && SEL_ARR_prt_table_0_valid_2_prt_table_1_valid__ETC___d42 ;
+    
+    // Selects the third input of MUX for prt_table 0 valid write operation when enabling read entry and another condition for slot 3.
+    assign MUX_prt_table_0_valid$write_1__SEL_3 = EN_read_prt_entry && IF_read_slot_3_BIT_1_4_THEN_read_slot_3_BIT_0__ETC___d77 ;
+    
+    // Selects the first input of MUX for the prt_table 1 bytes received when enabling write operation and slot 1 is free.
+    assign MUX_prt_table_1_bytes_rcvd$write_1__SEL_1 = EN_write_prt_entry && write_slot[0] == 1'd1 ;
+    
+    // Selects the second input of MUX for the prt_table 1 bytes received when starting write operation and slot 1 is free.
+    assign MUX_prt_table_1_bytes_rcvd$write_1__SEL_2 = EN_start_writing_prt_entry && write_slot[0] == 1'd1 ;
+    
+    // Selects the first input of MUX for prt_table 1 bytes sent result when enabling read operation and slot 1 is free.
+    assign MUX_prt_table_1_bytes_sent_res$write_1__SEL_1 = EN_read_prt_entry && read_slot[0] == 1'd1 ;
+    
+    // Selects the first input of MUX for prt_table 1 frame write operation when starting read and specific conditions are met.
+    assign MUX_prt_table_1_frame$b_put_1__SEL_1 = EN_start_reading_prt_entry && start_reading_prt_entry_slot == 1'd1 && NOT_SEL_ARR_NOT_prt_table_0_valid_2_3_NOT_prt__ETC___d47 ;
+    
+    // Selects the second input of MUX for prt_table 1 valid write operation when invalidating prt entry and the slot is invalid.
+    assign MUX_prt_table_1_valid$write_1__SEL_2 = EN_invalidate_prt_entry && invalidate_prt_entry_slot == 1'd1 && SEL_ARR_prt_table_0_valid_2_prt_table_1_valid__ETC___d42 ;
+    
+    // Selects the third input of MUX for prt_table 1 valid write operation when enabling read entry and another condition for slot 3.
+    assign MUX_prt_table_1_valid$write_1__SEL_3 = EN_read_prt_entry && IF_read_slot_3_BIT_1_4_THEN_read_slot_3_BIT_0__ETC___d78 ;
+    
+    // Selects the first input of MUX for reading the prt slot when enabling the read operation and matching other conditions.
+    assign MUX_read_slot$write_1__SEL_1 = EN_read_prt_entry && x__h2937 == y__h2770 && SEL_ARR_prt_table_0_is_frame_fully_rcvd_9_prt__ETC___d75 ;
+    
+    // Selects the first input of MUX for using the write slot when invalidating prt entry and conditions on the write slot are met.
+    assign MUX_using_write_slot$write_1__SEL_1 = EN_invalidate_prt_entry && write_slot_BIT_1_AND_IF_write_slot_BIT_1_THEN__ETC___d39 ;
+    
+    // Computes the next value for prt_table 0 bytes received by incrementing the value of x2 by 1.
+    assign MUX_prt_table_0_bytes_rcvd$write_1__VAL_1 = x2__h2068 + 16'd1 ;
+    
+    // Computes the next value for prt_table 0 bytes sent request by incrementing the value of y by 1.
+    assign MUX_prt_table_0_bytes_sent_req$write_1__VAL_2 = y__h2729 + 16'd1 ;
+    
+    // Combines the starting read signal with other conditions into a single value for the MUX input for the read slot.
+    assign MUX_read_slot$write_1__VAL_2 = { 1'd1, start_reading_prt_entry_slot } ;
+    
+    // Combines conditions for the write slot into a single value for the MUX input based on validity of prt_table 0 and prt_table 1.
+    assign MUX_write_slot$write_1__VAL_3 = { !prt_table_1_valid || !prt_table_0_valid, !prt_table_1_valid } ;
+    
+// ____________________________________________________________________________________________________________________________
 
   // inlined wires
   assign conflict_update_write_slot$whas = EN_read_prt_entry && x__h2937 == y__h2770 && SEL_ARR_prt_table_0_is_frame_fully_rcvd_9_prt__ETC___d75 || EN_invalidate_prt_entry ;
@@ -382,6 +383,7 @@ assign MUX_write_slot$write_1__VAL_3 = { !prt_table_1_valid || !prt_table_0_vali
   assign write_slot$D_IN = WILL_FIRE_RL_update_write_slot ? MUX_write_slot$write_1__VAL_3 : 2'd0 ;
   assign write_slot$EN = EN_invalidate_prt_entry && write_slot_BIT_1_AND_IF_write_slot_BIT_1_THEN__ETC___d39 || EN_finish_writing_prt_entry || WILL_FIRE_RL_update_write_slot ;
 
+// ____________________________________________________________________________________________________________________________
 
   // submodule prt_table_0_frame
   assign prt_table_0_frame$ADDRA = x2__h2068 ;  // Assign the address for prt_table_0_frame's ADDRA to x2__h2068
@@ -412,145 +414,164 @@ assign MUX_write_slot$write_1__VAL_3 = { !prt_table_1_valid || !prt_table_0_vali
   assign write_slot_BIT_1_AND_IF_write_slot_BIT_1_THEN__ETC___d39 = write_slot[1] && write_slot[0] == invalidate_prt_entry_slot && using_write_slot ;  // Check if both write_slot[1] and write_slot[0] are true for invalidating prt entry slot
   assign x__h2937 = x__h2728 + 16'd1 ;  // Increment x__h2728 by 1 and assign to x__h2937
   
-  
-  always_comb begin : is_frame_fully_rcvd_logic
-  case (write_slot[0])
-    1'd0: CASE_write_slot_BIT_0_0_NOT_prt_table_0_is_fra_ETC__q1 = !prt_table_0_is_frame_fully_rcvd;
-    1'd1: CASE_write_slot_BIT_0_0_NOT_prt_table_0_is_fra_ETC__q1 = !prt_table_1_is_frame_fully_rcvd;
-    default: CASE_write_slot_BIT_0_0_NOT_prt_table_0_is_fra_ETC__q1 = 1'bx; // Handle default case (optional but good practice)
-  endcase
-end
+// ____________________________________________________________________________________________________________________________
 
-always_comb begin : bytes_sent_res_logic
-  case (read_slot[0])
-    1'd0: x__h2728 = prt_table_0_bytes_sent_res;
-    1'd1: x__h2728 = prt_table_1_bytes_sent_res;
-    default: x__h2728 = 'x; // Default case
-  endcase
-end
-
-always_comb begin : valid_write_logic
-  case (write_slot[0])
-    1'd0: CASE_write_slot_BIT_0_0_NOT_prt_table_0_valid__ETC__q2 = !prt_table_0_valid;
-    1'd1: CASE_write_slot_BIT_0_0_NOT_prt_table_0_valid__ETC__q2 = !prt_table_1_valid;
-    default: CASE_write_slot_BIT_0_0_NOT_prt_table_0_valid__ETC__q2 = 1'bx;
-  endcase
-end
-
-always_comb begin : bytes_sent_req_logic
-  case (read_slot[0])
-    1'd0: y__h2729 = prt_table_0_bytes_sent_req;
-    1'd1: y__h2729 = prt_table_1_bytes_sent_req;
-    default: y__h2729 = 'x;
-  endcase
-end
-
-always_comb begin : bytes_rcvd_write_logic
-  case (write_slot[0])
-    1'd0: x2__h2068 = prt_table_0_bytes_rcvd;
-    1'd1: x2__h2068 = prt_table_1_bytes_rcvd;
-    default: x2__h2068 = 'x;
-  endcase
-end
-
-always_comb begin : bytes_rcvd_read_logic
-  case (read_slot[0])
-    1'd0: y__h2770 = prt_table_0_bytes_rcvd;
-    1'd1: y__h2770 = prt_table_1_bytes_rcvd;
-    default: y__h2770 = 'x;
-  endcase
-end
-
-always_comb begin : frame_dob_logic
-  case (read_slot[0])
-    1'd0: x__h2676 = prt_table_0_frame$DOB;
-    1'd1: x__h2676 = prt_table_1_frame$DOB;
-    default: x__h2676 = 'x;
-  endcase
-end
-
-always_comb begin : is_frame_fully_rcvd_read_logic
-  case (read_slot[0])
-    1'd0: SEL_ARR_prt_table_0_is_frame_fully_rcvd_9_prt__ETC___d75 = prt_table_0_is_frame_fully_rcvd;
-    1'd1: SEL_ARR_prt_table_0_is_frame_fully_rcvd_9_prt__ETC___d75 = prt_table_1_is_frame_fully_rcvd;
-    default: SEL_ARR_prt_table_0_is_frame_fully_rcvd_9_prt__ETC___d75 = 1'bx;
-  endcase
-end
-
-always_comb begin : valid_read_logic
-  case (read_slot[0])
-    1'd0: CASE_read_slot_BIT_0_0_prt_table_0_valid_1_prt_ETC__q3 = prt_table_0_valid;
-    1'd1: CASE_read_slot_BIT_0_0_prt_table_0_valid_1_prt_ETC__q3 = prt_table_1_valid;
-    default: CASE_read_slot_BIT_0_0_prt_table_0_valid_1_prt_ETC__q3 = 1'bx;
-  endcase
-end
-
-always_comb begin : valid_invalidate_logic
-  case (invalidate_prt_entry_slot)
-    1'd0: SEL_ARR_prt_table_0_valid_2_prt_table_1_valid__ETC___d42 = prt_table_0_valid;
-    1'd1: SEL_ARR_prt_table_0_valid_2_prt_table_1_valid__ETC___d42 = prt_table_1_valid;
-    default: SEL_ARR_prt_table_0_valid_2_prt_table_1_valid__ETC___d42 = 1'bx;
-  endcase
-end
-
-always_comb begin : valid_start_read_logic
-  case (start_reading_prt_entry_slot)
-    1'd0: CASE_start_reading_prt_entry_slot_0_NOT_prt_ta_ETC__q4 = !prt_table_0_valid;
-    1'd1: CASE_start_reading_prt_entry_slot_0_NOT_prt_ta_ETC__q4 = !prt_table_1_valid;
-    default: CASE_start_reading_prt_entry_slot_0_NOT_prt_ta_ETC__q4 = 1'bx;
-  endcase
-end
-
-  // handling of inlined registers
-
-  always @(posedge CLK) begin
-  if (!RST_N) begin
-    prt_table_0_bytes_rcvd <= '0;
-    prt_table_0_bytes_sent_req <= '0;
-    prt_table_0_bytes_sent_res <= '0;
-    prt_table_0_is_frame_fully_rcvd <= '0;
-    prt_table_0_valid <= '0;
-    prt_table_1_bytes_rcvd <= '0;
-    prt_table_1_bytes_sent_req <= '0;
-    prt_table_1_bytes_sent_res <= '0;
-    prt_table_1_is_frame_fully_rcvd <= '0;
-    prt_table_1_valid <= '0;
-    read_slot <= '0;
-    using_write_slot <= '0;
-    write_slot <= 2'd2; 
-  end else begin
-    if (prt_table_0_bytes_rcvd$EN) prt_table_0_bytes_rcvd <= prt_table_0_bytes_rcvd$D_IN;
-    if (prt_table_0_bytes_sent_req$EN) prt_table_0_bytes_sent_req <= prt_table_0_bytes_sent_req$D_IN;
-    if (prt_table_0_bytes_sent_res$EN) prt_table_0_bytes_sent_res <= prt_table_0_bytes_sent_res$D_IN;
-    if (prt_table_0_is_frame_fully_rcvd$EN) prt_table_0_is_frame_fully_rcvd <= prt_table_0_is_frame_fully_rcvd$D_IN;
-    if (prt_table_0_valid$EN) prt_table_0_valid <= prt_table_0_valid$D_IN;
-    if (prt_table_1_bytes_rcvd$EN) prt_table_1_bytes_rcvd <= prt_table_1_bytes_rcvd$D_IN;
-    if (prt_table_1_bytes_sent_req$EN) prt_table_1_bytes_sent_req <= prt_table_1_bytes_sent_req$D_IN;
-    if (prt_table_1_bytes_sent_res$EN) prt_table_1_bytes_sent_res <= prt_table_1_bytes_sent_res$D_IN;
-    if (prt_table_1_is_frame_fully_rcvd$EN) prt_table_1_is_frame_fully_rcvd <= prt_table_1_is_frame_fully_rcvd$D_IN;
-    if (prt_table_1_valid$EN) prt_table_1_valid <= prt_table_1_valid$D_IN;
-    if (read_slot$EN) read_slot <= read_slot$D_IN;
-    if (using_write_slot$EN) using_write_slot <= using_write_slot$D_IN;
-    if (write_slot$EN) write_slot <= write_slot$D_IN;
-  end
-end
-
-//initialize register signals
-
-initial begin
-  prt_table_0_bytes_rcvd = '0;
-  prt_table_0_bytes_sent_req = '0;
-  prt_table_0_bytes_sent_res = '0;
-  prt_table_0_is_frame_fully_rcvd = '0;
-  prt_table_0_valid = '0;
-  prt_table_1_bytes_rcvd = '0;
-  prt_table_1_bytes_sent_req = '0;
-  prt_table_1_bytes_sent_res = '0;
-  prt_table_1_is_frame_fully_rcvd = '0;
-  prt_table_1_valid = '0;
-  read_slot = '0;
-  using_write_slot = '0;
-  write_slot = 2'd2; 
-end
+    // is_frame_fully_rcvd_logic: Determines if a frame is fully received based on the write_slot value
+    always_comb begin : is_frame_fully_rcvd_logic
+      case (write_slot[0])  // Check the first bit of write_slot
+        1'd0: CASE_write_slot_BIT_0_0_NOT_prt_table_0_is_fra_ETC__q1 = !prt_table_0_is_frame_fully_rcvd;  // If write_slot[0] is 0, negate prt_table_0_is_frame_fully_rcvd
+        1'd1: CASE_write_slot_BIT_0_0_NOT_prt_table_0_is_fra_ETC__q1 = !prt_table_1_is_frame_fully_rcvd;  // If write_slot[0] is 1, negate prt_table_1_is_frame_fully_rcvd
+        default: CASE_write_slot_BIT_0_0_NOT_prt_table_0_is_fra_ETC__q1 = 1'bx;  // Default case, return unknown value (optional for good practice)
+      endcase
+    end
+    
+    // bytes_sent_res_logic: Determines which bytes_sent_res value to use based on the read_slot value
+    always_comb begin : bytes_sent_res_logic
+      case (read_slot[0])  // Check the first bit of read_slot
+        1'd0: x__h2728 = prt_table_0_bytes_sent_res;  // If read_slot[0] is 0, assign prt_table_0_bytes_sent_res to x__h2728
+        1'd1: x__h2728 = prt_table_1_bytes_sent_res;  // If read_slot[0] is 1, assign prt_table_1_bytes_sent_res to x__h2728
+        default: x__h2728 = 'x;  // Default case, return unknown value
+      endcase
+    end
+    
+    // valid_write_logic: Determines if a valid write can occur based on write_slot
+    always_comb begin : valid_write_logic
+      case (write_slot[0])  // Check the first bit of write_slot
+        1'd0: CASE_write_slot_BIT_0_0_NOT_prt_table_0_valid__ETC__q2 = !prt_table_0_valid;  // If write_slot[0] is 0, negate prt_table_0_valid
+        1'd1: CASE_write_slot_BIT_0_0_NOT_prt_table_0_valid__ETC__q2 = !prt_table_1_valid;  // If write_slot[0] is 1, negate prt_table_1_valid
+        default: CASE_write_slot_BIT_0_0_NOT_prt_table_0_valid__ETC__q2 = 1'bx;  // Default case, return unknown value
+      endcase
+    end
+    
+    // bytes_sent_req_logic: Selects the appropriate bytes_sent_req value based on the read_slot value
+    always_comb begin : bytes_sent_req_logic
+      case (read_slot[0])  // Check the first bit of read_slot
+        1'd0: y__h2729 = prt_table_0_bytes_sent_req;  // If read_slot[0] is 0, assign prt_table_0_bytes_sent_req to y__h2729
+        1'd1: y__h2729 = prt_table_1_bytes_sent_req;  // If read_slot[0] is 1, assign prt_table_1_bytes_sent_req to y__h2729
+        default: y__h2729 = 'x;  // Default case, return unknown value
+      endcase
+    end
+    
+    // bytes_rcvd_write_logic: Determines which bytes_rcvd value to use for writing based on write_slot
+    always_comb begin : bytes_rcvd_write_logic
+      case (write_slot[0])  // Check the first bit of write_slot
+        1'd0: x2__h2068 = prt_table_0_bytes_rcvd;  // If write_slot[0] is 0, assign prt_table_0_bytes_rcvd to x2__h2068
+        1'd1: x2__h2068 = prt_table_1_bytes_rcvd;  // If write_slot[0] is 1, assign prt_table_1_bytes_rcvd to x2__h2068
+        default: x2__h2068 = 'x;  // Default case, return unknown value
+      endcase
+    end
+    
+    // bytes_rcvd_read_logic: Selects the appropriate bytes_rcvd value for reading based on read_slot
+    always_comb begin : bytes_rcvd_read_logic
+      case (read_slot[0])  // Check the first bit of read_slot
+        1'd0: y__h2770 = prt_table_0_bytes_rcvd;  // If read_slot[0] is 0, assign prt_table_0_bytes_rcvd to y__h2770
+        1'd1: y__h2770 = prt_table_1_bytes_rcvd;  // If read_slot[0] is 1, assign prt_table_1_bytes_rcvd to y__h2770
+        default: y__h2770 = 'x;  // Default case, return unknown value
+      endcase
+    end
+    
+    // frame_dob_logic: Selects the appropriate frame data output (DOB) based on the read_slot value
+    always_comb begin : frame_dob_logic
+      case (read_slot[0])  // Check the first bit of read_slot
+        1'd0: x__h2676 = prt_table_0_frame$DOB;  // If read_slot[0] is 0, assign prt_table_0_frame$DOB to x__h2676
+        1'd1: x__h2676 = prt_table_1_frame$DOB;  // If read_slot[0] is 1, assign prt_table_1_frame$DOB to x__h2676
+        default: x__h2676 = 'x;  // Default case, return unknown value
+      endcase
+    end
+    
+    // is_frame_fully_rcvd_read_logic: Checks if the frame is fully received based on read_slot
+    always_comb begin : is_frame_fully_rcvd_read_logic
+      case (read_slot[0])  // Check the first bit of read_slot
+        1'd0: SEL_ARR_prt_table_0_is_frame_fully_rcvd_9_prt__ETC___d75 = prt_table_0_is_frame_fully_rcvd;  // If read_slot[0] is 0, assign prt_table_0_is_frame_fully_rcvd to SEL_ARR_prt_table_0_is_frame_fully_rcvd_9_prt__ETC___d75
+        1'd1: SEL_ARR_prt_table_0_is_frame_fully_rcvd_9_prt__ETC___d75 = prt_table_1_is_frame_fully_rcvd;  // If read_slot[0] is 1, assign prt_table_1_is_frame_fully_rcvd to SEL_ARR_prt_table_0_is_frame_fully_rcvd_9_prt__ETC___d75
+        default: SEL_ARR_prt_table_0_is_frame_fully_rcvd_9_prt__ETC___d75 = 1'bx;  // Default case, return unknown value
+      endcase
+    end
+    
+    // valid_read_logic: Selects the appropriate valid signal based on read_slot
+    always_comb begin : valid_read_logic
+      case (read_slot[0])  // Check the first bit of read_slot
+        1'd0: CASE_read_slot_BIT_0_0_prt_table_0_valid_1_prt_ETC__q3 = prt_table_0_valid;  // If read_slot[0] is 0, assign prt_table_0_valid to CASE_read_slot_BIT_0_0_prt_table_0_valid_1_prt_ETC__q3
+        1'd1: CASE_read_slot_BIT_0_0_prt_table_0_valid_1_prt_ETC__q3 = prt_table_1_valid;  // If read_slot[0] is 1, assign prt_table_1_valid to CASE_read_slot_BIT_0_0_prt_table_0_valid_1_prt_ETC__q3
+        default: CASE_read_slot_BIT_0_0_prt_table_0_valid_1_prt_ETC__q3 = 1'bx;  // Default case, return unknown value
+      endcase
+    end
+    
+    // valid_invalidate_logic: Determines which table to invalidate based on the invalidate_prt_entry_slot value
+    always_comb begin : valid_invalidate_logic
+      case (invalidate_prt_entry_slot)  // Check the invalidate_prt_entry_slot value
+        1'd0: SEL_ARR_prt_table_0_valid_2_prt_table_1_valid__ETC___d42 = prt_table_0_valid;  // If invalidate_prt_entry_slot is 0, assign prt_table_0_valid to SEL_ARR_prt_table_0_valid_2_prt_table_1_valid__ETC___d42
+        1'd1: SEL_ARR_prt_table_0_valid_2_prt_table_1_valid__ETC___d42 = prt_table_1_valid;  // If invalidate_prt_entry_slot is 1, assign prt_table_1_valid to SEL_ARR_prt_table_0_valid_2_prt_table_1_valid__ETC___d42
+        default: SEL_ARR_prt_table_0_valid_2_prt_table_1_valid__ETC___d42 = 1'bx;  // Default case, return unknown value
+      endcase
+    end
+    
+    // valid_start_read_logic: Determines when to start reading based on start_reading_prt_entry_slot
+    always_comb begin : valid_start_read_logic
+      case (start_reading_prt_entry_slot)  // Check the start_reading_prt_entry_slot value
+        1'd0: CASE_start_reading_prt_entry_slot_0_NOT_prt_ta_ETC__q4 = !prt_table_0_valid;  // If start_reading_prt_entry_slot is 0, negate prt_table_0_valid
+        1'd1: CASE_start_reading_prt_entry_slot_0_NOT_prt_ta_ETC__q4 = !prt_table_1_valid;  // If start_reading_prt_entry_slot is 1, negate prt_table_1_valid
+        default: CASE_start_reading_prt_entry_slot_0_NOT_prt_ta_ETC__q4 = 1'bx;  // Default case, return unknown value
+      endcase
+    end
+    
+// ____________________________________________________________________________________________________________________________
+    
+    // Handling inlined registers during clock cycles (posedge of CLK)
+    // This always block describes the behavior of the registers when the reset is active (RST_N) or during regular operations.
+    
+    always @(posedge CLK) begin
+      if (!RST_N) begin // If reset is active (RST_N is low)
+        // Reset all registers to their initial states (zeros).
+        prt_table_0_bytes_rcvd <= '0;
+        prt_table_0_bytes_sent_req <= '0;
+        prt_table_0_bytes_sent_res <= '0;
+        prt_table_0_is_frame_fully_rcvd <= '0;
+        prt_table_0_valid <= '0;
+        prt_table_1_bytes_rcvd <= '0;
+        prt_table_1_bytes_sent_req <= '0;
+        prt_table_1_bytes_sent_res <= '0;
+        prt_table_1_is_frame_fully_rcvd <= '0;
+        prt_table_1_valid <= '0;
+        read_slot <= '0;
+        using_write_slot <= '0;
+        write_slot <= 2'd2; // Reset write_slot to '2' (indicating an invalid state)
+      end else begin
+        // If reset is not active, update the registers based on their enable signals and data inputs.
+        // Each register is updated only if the corresponding enable signal is active.
+        if (prt_table_0_bytes_rcvd$EN) prt_table_0_bytes_rcvd <= prt_table_0_bytes_rcvd$D_IN;
+        if (prt_table_0_bytes_sent_req$EN) prt_table_0_bytes_sent_req <= prt_table_0_bytes_sent_req$D_IN;
+        if (prt_table_0_bytes_sent_res$EN) prt_table_0_bytes_sent_res <= prt_table_0_bytes_sent_res$D_IN;
+        if (prt_table_0_is_frame_fully_rcvd$EN) prt_table_0_is_frame_fully_rcvd <= prt_table_0_is_frame_fully_rcvd$D_IN;
+        if (prt_table_0_valid$EN) prt_table_0_valid <= prt_table_0_valid$D_IN;
+        if (prt_table_1_bytes_rcvd$EN) prt_table_1_bytes_rcvd <= prt_table_1_bytes_rcvd$D_IN;
+        if (prt_table_1_bytes_sent_req$EN) prt_table_1_bytes_sent_req <= prt_table_1_bytes_sent_req$D_IN;
+        if (prt_table_1_bytes_sent_res$EN) prt_table_1_bytes_sent_res <= prt_table_1_bytes_sent_res$D_IN;
+        if (prt_table_1_is_frame_fully_rcvd$EN) prt_table_1_is_frame_fully_rcvd <= prt_table_1_is_frame_fully_rcvd$D_IN;
+        if (prt_table_1_valid$EN) prt_table_1_valid <= prt_table_1_valid$D_IN;
+        if (read_slot$EN) read_slot <= read_slot$D_IN;
+        if (using_write_slot$EN) using_write_slot <= using_write_slot$D_IN;
+        if (write_slot$EN) write_slot <= write_slot$D_IN;
+      end
+    end
+    
+    // Initialize the registers with default values at the start (initial block).
+    // This ensures that all registers have known values during simulation startup.
+    
+    initial begin
+      prt_table_0_bytes_rcvd = '0;
+      prt_table_0_bytes_sent_req = '0;
+      prt_table_0_bytes_sent_res = '0;
+      prt_table_0_is_frame_fully_rcvd = '0;
+      prt_table_0_valid = '0;
+      prt_table_1_bytes_rcvd = '0;
+      prt_table_1_bytes_sent_req = '0;
+      prt_table_1_bytes_sent_res = '0;
+      prt_table_1_is_frame_fully_rcvd = '0;
+      prt_table_1_valid = '0;
+      read_slot = '0;
+      using_write_slot = '0;
+      write_slot = 2'd2; // Set default value for write_slot (invalid state).
+    end
 
 endmodule
