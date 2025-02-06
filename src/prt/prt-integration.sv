@@ -1,4 +1,5 @@
 `timescale 1ns/1ps
+// --------------------------------------------- PACKET REFERENCE TABLE - COMPLETE DESIGN -----------------------------------------------
 
 module mkPRT(
 
@@ -43,7 +44,6 @@ module mkPRT(
   );
   
 // ----------------------------------------------------------------------------------------------------------------------------
-
 // ------------------------------------------------------- INLINE WIRES -------------------------------------------------------
 
   // inlined wires
@@ -153,8 +153,7 @@ logic NOT_SEL_ARR_NOT_prt_table_0_valid_2_3_NOT_prt__ETC___d47, SEL_ARR_prt_tabl
 logic SEL_ARR_prt_table_0_bytes_sent_res_8_prt_table_ETC___d85, write_slot_BIT_1_AND_IF_write_slot_BIT_1_THEN__ETC___d39;  // Signals for byte sent results and conditional logic for write slot
 
 // ----------------------------------------------------------------------------------------------------------------------------
-
-// -------------------------------------------------------  -------------------------------------------------------
+// -------------------------------------------------------              -------------------------------------------------------
 
 // Actionvalue method start_writing_prt_entry
 // 'start_writing_prt_entry' is assigned to the value of the first bit of 'write_slot',
@@ -215,8 +214,7 @@ assign is_prt_slot_free = write_slot[1] && !using_write_slot;
 assign RDY_is_prt_slot_free = 1'd1;
 
 // ----------------------------------------------------------------------------------------------------------------------------
-
-// ------------------------------------------------------- BRAM MODULE INSTANCES -------------------------------------------------------
+// ------------------------------------------------------- BRAM MODULE INSTANCES ----------------------------------------------
 
 // BRAM2 instance for prt_table_0_frame
 // This module instantiates a Block RAM (BRAM) to store the PRT table 0 frame data
@@ -241,6 +239,7 @@ BRAM2 #(.PIPELINED(1'd0),                         // PIPELINED is set to 0, mean
             .DOB(prt_table_0_frame$DOB)           // Data output for port B (used for reading data from the BRAM).
         );
 
+
 // BRAM2 instance for prt_table_1_frame
 // This module instantiates another Block RAM (BRAM) to store the PRT table 1 frame data
 // with similar parameters as the first BRAM instance, but this one is separate for prt_table_1.
@@ -249,9 +248,9 @@ BRAM2 #(.PIPELINED(1'd0),                        // PIPELINED is set to 0, meani
         .ADDR_WIDTH(32'd16),                     // Address width is set to 16 bits (addressable space of 2^16).
         .DATA_WIDTH(32'd8),                      // Data width is set to 8 bits (1 byte per data entry).
         .MEMSIZE(17'd2000)                       // Memory size is 2000 entries (addressable with 17 bits).
-       ) prt_table_1_frame(                      // Instance name 'prt_table_1_frame'
-            .CLKA(CLK),                          // Clock for port A (input side).
-            .CLKB(CLK),                          // Clock for port B (output side), both using the same clock signal (CLK).
+       ) prt_table_1_frame(                       // Instance name 'prt_table_1_frame'
+            .CLKA(CLK),                           // Clock for port A (input side).
+            .CLKB(CLK),                           // Clock for port B (output side), both using the same clock signal (CLK).
             .ADDRA(prt_table_1_frame$ADDRA),      // Address input for port A (used for writing to the BRAM).
             .ADDRB(prt_table_1_frame$ADDRB),      // Address input for port B (used for reading from the BRAM).
             .DIA(prt_table_1_frame$DIA),          // Data input for port A (data to be written to the BRAM).
@@ -265,28 +264,67 @@ BRAM2 #(.PIPELINED(1'd0),                        // PIPELINED is set to 0, meani
         );
 
 
-  // rule RL_update_write_slot
-  assign WILL_FIRE_RL_update_write_slot = !using_write_slot && !write_slot[1] && !conflict_update_write_slot$whas && !EN_read_prt_entry && !EN_invalidate_prt_entry ;
+// rule RL_update_write_slot: The rule checks if the write slot is not being used and if no conflicts exist for updating the write slot.
+assign WILL_FIRE_RL_update_write_slot = !using_write_slot && !write_slot[1] && !conflict_update_write_slot$whas && !EN_read_prt_entry && !EN_invalidate_prt_entry ;
 
-  // inputs to muxes for submodule ports
-  assign MUX_prt_table_0_bytes_rcvd$write_1__SEL_1 = EN_write_prt_entry && write_slot[0] == 1'd0 ;
-  assign MUX_prt_table_0_bytes_rcvd$write_1__SEL_2 = EN_start_writing_prt_entry && write_slot[0] == 1'd0 ;
-  assign MUX_prt_table_0_bytes_sent_res$write_1__SEL_1 = EN_read_prt_entry && read_slot[0] == 1'd0 ;
-  assign MUX_prt_table_0_frame$b_put_1__SEL_1 = EN_start_reading_prt_entry && start_reading_prt_entry_slot == 1'd0 && NOT_SEL_ARR_NOT_prt_table_0_valid_2_3_NOT_prt__ETC___d47 ;
-  assign MUX_prt_table_0_valid$write_1__SEL_2 = EN_invalidate_prt_entry && invalidate_prt_entry_slot == 1'd0 && SEL_ARR_prt_table_0_valid_2_prt_table_1_valid__ETC___d42 ;
-  assign MUX_prt_table_0_valid$write_1__SEL_3 = EN_read_prt_entry && IF_read_slot_3_BIT_1_4_THEN_read_slot_3_BIT_0__ETC___d77 ;
-  assign MUX_prt_table_1_bytes_rcvd$write_1__SEL_1 = EN_write_prt_entry && write_slot[0] == 1'd1 ;
-  assign MUX_prt_table_1_bytes_rcvd$write_1__SEL_2 = EN_start_writing_prt_entry && write_slot[0] == 1'd1 ;
-  assign MUX_prt_table_1_bytes_sent_res$write_1__SEL_1 = EN_read_prt_entry && read_slot[0] == 1'd1 ;
-  assign MUX_prt_table_1_frame$b_put_1__SEL_1 = EN_start_reading_prt_entry && start_reading_prt_entry_slot == 1'd1 && NOT_SEL_ARR_NOT_prt_table_0_valid_2_3_NOT_prt__ETC___d47 ;
-  assign MUX_prt_table_1_valid$write_1__SEL_2 = EN_invalidate_prt_entry && invalidate_prt_entry_slot == 1'd1 && SEL_ARR_prt_table_0_valid_2_prt_table_1_valid__ETC___d42 ;
-  assign MUX_prt_table_1_valid$write_1__SEL_3 = EN_read_prt_entry && IF_read_slot_3_BIT_1_4_THEN_read_slot_3_BIT_0__ETC___d78 ;
-  assign MUX_read_slot$write_1__SEL_1 = EN_read_prt_entry && x__h2937 == y__h2770 && SEL_ARR_prt_table_0_is_frame_fully_rcvd_9_prt__ETC___d75 ;
-  assign MUX_using_write_slot$write_1__SEL_1 = EN_invalidate_prt_entry && write_slot_BIT_1_AND_IF_write_slot_BIT_1_THEN__ETC___d39 ;
-  assign MUX_prt_table_0_bytes_rcvd$write_1__VAL_1 = x2__h2068 + 16'd1 ;
-  assign MUX_prt_table_0_bytes_sent_req$write_1__VAL_2 = y__h2729 + 16'd1 ;
-  assign MUX_read_slot$write_1__VAL_2 = { 1'd1, start_reading_prt_entry_slot } ;
-  assign MUX_write_slot$write_1__VAL_3 = { !prt_table_1_valid || !prt_table_0_valid, !prt_table_1_valid } ;
+// inputs to muxes for submodule ports
+
+// Selects the first input of MUX for the prt_table 0 bytes received when enabling write operation and the slot 0 is free.
+assign MUX_prt_table_0_bytes_rcvd$write_1__SEL_1 = EN_write_prt_entry && write_slot[0] == 1'd0 ;
+
+// Selects the second input of MUX for the prt_table 0 bytes received when starting the write operation and slot 0 is free.
+assign MUX_prt_table_0_bytes_rcvd$write_1__SEL_2 = EN_start_writing_prt_entry && write_slot[0] == 1'd0 ;
+
+// Selects the first input of MUX for the prt_table 0 bytes sent result when enabling read operation and slot 0 is free.
+assign MUX_prt_table_0_bytes_sent_res$write_1__SEL_1 = EN_read_prt_entry && read_slot[0] == 1'd0 ;
+
+// Selects the first input of MUX for prt_table 0 frame write operation when starting read and specific conditions are met.
+assign MUX_prt_table_0_frame$b_put_1__SEL_1 = EN_start_reading_prt_entry && start_reading_prt_entry_slot == 1'd0 && NOT_SEL_ARR_NOT_prt_table_0_valid_2_3_NOT_prt__ETC___d47 ;
+
+// Selects the second input of MUX for prt_table 0 valid write operation when invalidating prt entry and the slot is invalid.
+assign MUX_prt_table_0_valid$write_1__SEL_2 = EN_invalidate_prt_entry && invalidate_prt_entry_slot == 1'd0 && SEL_ARR_prt_table_0_valid_2_prt_table_1_valid__ETC___d42 ;
+
+// Selects the third input of MUX for prt_table 0 valid write operation when enabling read entry and another condition for slot 3.
+assign MUX_prt_table_0_valid$write_1__SEL_3 = EN_read_prt_entry && IF_read_slot_3_BIT_1_4_THEN_read_slot_3_BIT_0__ETC___d77 ;
+
+// Selects the first input of MUX for the prt_table 1 bytes received when enabling write operation and slot 1 is free.
+assign MUX_prt_table_1_bytes_rcvd$write_1__SEL_1 = EN_write_prt_entry && write_slot[0] == 1'd1 ;
+
+// Selects the second input of MUX for the prt_table 1 bytes received when starting write operation and slot 1 is free.
+assign MUX_prt_table_1_bytes_rcvd$write_1__SEL_2 = EN_start_writing_prt_entry && write_slot[0] == 1'd1 ;
+
+// Selects the first input of MUX for prt_table 1 bytes sent result when enabling read operation and slot 1 is free.
+assign MUX_prt_table_1_bytes_sent_res$write_1__SEL_1 = EN_read_prt_entry && read_slot[0] == 1'd1 ;
+
+// Selects the first input of MUX for prt_table 1 frame write operation when starting read and specific conditions are met.
+assign MUX_prt_table_1_frame$b_put_1__SEL_1 = EN_start_reading_prt_entry && start_reading_prt_entry_slot == 1'd1 && NOT_SEL_ARR_NOT_prt_table_0_valid_2_3_NOT_prt__ETC___d47 ;
+
+// Selects the second input of MUX for prt_table 1 valid write operation when invalidating prt entry and the slot is invalid.
+assign MUX_prt_table_1_valid$write_1__SEL_2 = EN_invalidate_prt_entry && invalidate_prt_entry_slot == 1'd1 && SEL_ARR_prt_table_0_valid_2_prt_table_1_valid__ETC___d42 ;
+
+// Selects the third input of MUX for prt_table 1 valid write operation when enabling read entry and another condition for slot 3.
+assign MUX_prt_table_1_valid$write_1__SEL_3 = EN_read_prt_entry && IF_read_slot_3_BIT_1_4_THEN_read_slot_3_BIT_0__ETC___d78 ;
+
+// Selects the first input of MUX for reading the prt slot when enabling the read operation and matching other conditions.
+assign MUX_read_slot$write_1__SEL_1 = EN_read_prt_entry && x__h2937 == y__h2770 && SEL_ARR_prt_table_0_is_frame_fully_rcvd_9_prt__ETC___d75 ;
+
+// Selects the first input of MUX for using the write slot when invalidating prt entry and conditions on the write slot are met.
+assign MUX_using_write_slot$write_1__SEL_1 = EN_invalidate_prt_entry && write_slot_BIT_1_AND_IF_write_slot_BIT_1_THEN__ETC___d39 ;
+
+// Computes the next value for prt_table 0 bytes received by incrementing the value of x2 by 1.
+assign MUX_prt_table_0_bytes_rcvd$write_1__VAL_1 = x2__h2068 + 16'd1 ;
+
+// Computes the next value for prt_table 0 bytes sent request by incrementing the value of y by 1.
+assign MUX_prt_table_0_bytes_sent_req$write_1__VAL_2 = y__h2729 + 16'd1 ;
+
+// Combines the starting read signal with other conditions into a single value for the MUX input for the read slot.
+assign MUX_read_slot$write_1__VAL_2 = { 1'd1, start_reading_prt_entry_slot } ;
+
+// Combines conditions for the write slot into a single value for the MUX input based on validity of prt_table 0 and prt_table 1.
+assign MUX_write_slot$write_1__VAL_3 = { !prt_table_1_valid || !prt_table_0_valid, !prt_table_1_valid } ;
+
+
+
 
   // inlined wires
   assign conflict_update_write_slot$whas = EN_read_prt_entry && x__h2937 == y__h2770 && SEL_ARR_prt_table_0_is_frame_fully_rcvd_9_prt__ETC___d75 || EN_invalidate_prt_entry ;
@@ -343,34 +381,36 @@ BRAM2 #(.PIPELINED(1'd0),                        // PIPELINED is set to 0, meani
   assign write_slot$D_IN = WILL_FIRE_RL_update_write_slot ? MUX_write_slot$write_1__VAL_3 : 2'd0 ;
   assign write_slot$EN = EN_invalidate_prt_entry && write_slot_BIT_1_AND_IF_write_slot_BIT_1_THEN__ETC___d39 || EN_finish_writing_prt_entry || WILL_FIRE_RL_update_write_slot ;
 
+
   // submodule prt_table_0_frame
-  assign prt_table_0_frame$ADDRA = x2__h2068 ;
-  assign prt_table_0_frame$ADDRB = MUX_prt_table_0_frame$b_put_1__SEL_1 ? 16'd0 : y__h2729 ;
-  assign prt_table_0_frame$DIA = write_prt_entry_data ;
-  assign prt_table_0_frame$DIB = MUX_prt_table_0_frame$b_put_1__SEL_1 ? 8'b10101010 : 8'b10101010 ;
-  assign prt_table_0_frame$WEA = 1'd1 ;
-  assign prt_table_0_frame$WEB = 1'd0 ;
-  assign prt_table_0_frame$ENA = MUX_prt_table_0_bytes_rcvd$write_1__SEL_1 ;
-  assign prt_table_0_frame$ENB = EN_start_reading_prt_entry && start_reading_prt_entry_slot == 1'd0 && NOT_SEL_ARR_NOT_prt_table_0_valid_2_3_NOT_prt__ETC___d47 || EN_read_prt_entry && read_slot[0] == 1'd0 && SEL_ARR_prt_table_0_bytes_sent_req_4_prt_table_ETC___d69 ;
+  assign prt_table_0_frame$ADDRA = x2__h2068 ;  // Assign the address for prt_table_0_frame's ADDRA to x2__h2068
+  assign prt_table_0_frame$ADDRB = MUX_prt_table_0_frame$b_put_1__SEL_1 ? 16'd0 : y__h2729 ;  // Select the address for prt_table_0_frame's ADDRB based on the mux condition
+  assign prt_table_0_frame$DIA = write_prt_entry_data ;  // Assign the data for prt_table_0_frame's DIA to write_prt_entry_data
+  assign prt_table_0_frame$DIB = MUX_prt_table_0_frame$b_put_1__SEL_1 ? 8'b10101010 : 8'b10101010 ;  // Select the data for prt_table_0_frame's DIB based on mux condition (fixed value 8'b10101010)
+  assign prt_table_0_frame$WEA = 1'd1 ;  // Enable write for prt_table_0_frame's WEA
+  assign prt_table_0_frame$WEB = 1'd0 ;  // Disable write for prt_table_0_frame's WEB
+  assign prt_table_0_frame$ENA = MUX_prt_table_0_bytes_rcvd$write_1__SEL_1 ;  // Enable prt_table_0_frame's ENA based on the mux condition for bytes received
+  assign prt_table_0_frame$ENB = EN_start_reading_prt_entry && start_reading_prt_entry_slot == 1'd0 && NOT_SEL_ARR_NOT_prt_table_0_valid_2_3_NOT_prt__ETC___d47 || EN_read_prt_entry && read_slot[0] == 1'd0 && SEL_ARR_prt_table_0_bytes_sent_req_4_prt_table_ETC___d69 ;  // Enable prt_table_0_frame's ENB based on various conditions
 
   // submodule prt_table_1_frame
-  assign prt_table_1_frame$ADDRA = x2__h2068 ;
-  assign prt_table_1_frame$ADDRB = MUX_prt_table_1_frame$b_put_1__SEL_1 ? 16'd0 : y__h2729 ;
-  assign prt_table_1_frame$DIA = write_prt_entry_data ;
-  assign prt_table_1_frame$DIB = MUX_prt_table_1_frame$b_put_1__SEL_1 ? 8'b10101010  : 8'b10101010 ;
-  assign prt_table_1_frame$WEA = 1'd1 ;
-  assign prt_table_1_frame$WEB = 1'd0 ;
-  assign prt_table_1_frame$ENA = MUX_prt_table_1_bytes_rcvd$write_1__SEL_1 ;
-  assign prt_table_1_frame$ENB = EN_start_reading_prt_entry && start_reading_prt_entry_slot == 1'd1 && NOT_SEL_ARR_NOT_prt_table_0_valid_2_3_NOT_prt__ETC___d47 || EN_read_prt_entry && read_slot[0] == 1'd1 && SEL_ARR_prt_table_0_bytes_sent_req_4_prt_table_ETC___d69 ;
+  assign prt_table_1_frame$ADDRA = x2__h2068 ;  // Assign the address for prt_table_1_frame's ADDRA to x2__h2068
+  assign prt_table_1_frame$ADDRB = MUX_prt_table_1_frame$b_put_1__SEL_1 ? 16'd0 : y__h2729 ;  // Select the address for prt_table_1_frame's ADDRB based on the mux condition
+  assign prt_table_1_frame$DIA = write_prt_entry_data ;  // Assign the data for prt_table_1_frame's DIA to write_prt_entry_data
+  assign prt_table_1_frame$DIB = MUX_prt_table_1_frame$b_put_1__SEL_1 ? 8'b10101010  : 8'b10101010 ;  // Select the data for prt_table_1_frame's DIB based on mux condition (fixed value 8'b10101010)
+  assign prt_table_1_frame$WEA = 1'd1 ;  // Enable write for prt_table_1_frame's WEA
+  assign prt_table_1_frame$WEB = 1'd0 ;  // Disable write for prt_table_1_frame's WEB
+  assign prt_table_1_frame$ENA = MUX_prt_table_1_bytes_rcvd$write_1__SEL_1 ;  // Enable prt_table_1_frame's ENA based on the mux condition for bytes received
+  assign prt_table_1_frame$ENB = EN_start_reading_prt_entry && start_reading_prt_entry_slot == 1'd1 && NOT_SEL_ARR_NOT_prt_table_0_valid_2_3_NOT_prt__ETC___d47 || EN_read_prt_entry && read_slot[0] == 1'd1 && SEL_ARR_prt_table_0_bytes_sent_req_4_prt_table_ETC___d69 ;  // Enable prt_table_1_frame's ENB based on various conditions
 
   // remaining internal signals
-  assign IF_read_slot_3_BIT_1_4_THEN_read_slot_3_BIT_0__ETC___d77 = read_slot[0] == 1'd0 && x__h2937 == y__h2770 && SEL_ARR_prt_table_0_is_frame_fully_rcvd_9_prt__ETC___d75 ;
-  assign IF_read_slot_3_BIT_1_4_THEN_read_slot_3_BIT_0__ETC___d78 = read_slot[0] == 1'd1 && x__h2937 == y__h2770 && SEL_ARR_prt_table_0_is_frame_fully_rcvd_9_prt__ETC___d75 ;
-  assign NOT_SEL_ARR_NOT_prt_table_0_valid_2_3_NOT_prt__ETC___d47 = !CASE_start_reading_prt_entry_slot_0_NOT_prt_ta_ETC__q4 ;
-  assign SEL_ARR_prt_table_0_bytes_sent_req_4_prt_table_ETC___d69 = y__h2729 < y__h2770 ;
-  assign SEL_ARR_prt_table_0_bytes_sent_res_8_prt_table_ETC___d85 = x__h2728 < y__h2729 ;
-  assign write_slot_BIT_1_AND_IF_write_slot_BIT_1_THEN__ETC___d39 = write_slot[1] && write_slot[0] == invalidate_prt_entry_slot && using_write_slot ;
-  assign x__h2937 = x__h2728 + 16'd1 ;
+  assign IF_read_slot_3_BIT_1_4_THEN_read_slot_3_BIT_0__ETC___d77 = read_slot[0] == 1'd0 && x__h2937 == y__h2770 && SEL_ARR_prt_table_0_is_frame_fully_rcvd_9_prt__ETC___d75 ;  // Check condition for read_slot_3_BIT_1_4_THEN_read_slot_3_BIT_0
+  assign IF_read_slot_3_BIT_1_4_THEN_read_slot_3_BIT_0__ETC___d78 = read_slot[0] == 1'd1 && x__h2937 == y__h2770 && SEL_ARR_prt_table_0_is_frame_fully_rcvd_9_prt__ETC___d75 ;  // Check condition for read_slot_3_BIT_1_4_THEN_read_slot_3_BIT_0 when read_slot[0] is 1
+  assign NOT_SEL_ARR_NOT_prt_table_0_valid_2_3_NOT_prt__ETC___d47 = !CASE_start_reading_prt_entry_slot_0_NOT_prt_ta_ETC__q4 ;  // Assign the negated value of CASE_start_reading_prt_entry_slot_0_NOT_prt_ta_ETC__q4 to the signal
+  assign SEL_ARR_prt_table_0_bytes_sent_req_4_prt_table_ETC___d69 = y__h2729 < y__h2770 ;  // Check if the bytes sent request is less than the value of y__h2770
+  assign SEL_ARR_prt_table_0_bytes_sent_res_8_prt_table_ETC___d85 = x__h2728 < y__h2729 ;  // Check if the bytes sent response is less than the value of y__h2729
+  assign write_slot_BIT_1_AND_IF_write_slot_BIT_1_THEN__ETC___d39 = write_slot[1] && write_slot[0] == invalidate_prt_entry_slot && using_write_slot ;  // Check if both write_slot[1] and write_slot[0] are true for invalidating prt entry slot
+  assign x__h2937 = x__h2728 + 16'd1 ;  // Increment x__h2728 by 1 and assign to x__h2937
+  
   
   always_comb begin : is_frame_fully_rcvd_logic
   case (write_slot[0])
